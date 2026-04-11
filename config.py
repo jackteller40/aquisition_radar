@@ -1,13 +1,22 @@
 import os
-from dotenv import load_dotenv
 from pathlib import Path
 
-dotenv_path = Path(__file__).parent/  ".env"
-load_dotenv(dotenv_path = dotenv_path)
+try:
+    from dotenv import load_dotenv
+    dotenv_path = Path(__file__).parent/  ".env"
+    load_dotenv(dotenv_path = dotenv_path)
+except Exception:
+    pass
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-SERP_API_KEY = os.getenv("SERP_API_KEY")
-SEMRUSH_API_KEY = os.getenv("SEMRUSH_API_KEY")
+try:
+    import streamlit as st
+    ANTHROPIC_API_KEY = st.secrets.get("ANTHROPIC_API_KEY") or os.getenv("ANTHROPIC_API_KEY")
+    SERP_API_KEY = st.secrets.get("SERP_API_KEY") or os.getenv("SERP_API_KEY")
+    SEMRUSH_API_KEY = st.secrets.get("SEMRUSH_API_KEY") or os.getenv("SEMRUSH_API_KEY")
+except Exception:
+    ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+    SERP_API_KEY = os.getenv("SERP_API_KEY")
+    SEMRUSH_API_KEY = os.getenv("SEMRUSH_API_KEY")
 
 MODEL = "claude-sonnet-4-6"
 MAX_TOKENS = 1000
