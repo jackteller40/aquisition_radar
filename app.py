@@ -197,7 +197,7 @@ else:
     st.markdown("""
     **How it Works:**
     1. SerpAPI discovers wellness e-commerce domains matching tfw criteria
-    2. Platform detection identifies orachaic tech stacks
+    2. Platform detection identifies archaic tech stacks
     3. Traffic analysis scores organic presence
     4. WhoIs lookup estimes owner fatigue
     5. Weighted scoring model ranks all the targets
