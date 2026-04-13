@@ -48,7 +48,7 @@ Has Live Chat: {target.get('has_live_chat')}
 Is Archaic Platform: {target.get('is_archaic')}
 Traffic Score: {target.get('score_traffic_and_seo')}
 Operational Gaps Score: {target.get('score_owner_fatigue')}
-Platform Score: {target.get('score_platform_signals')}'
+Platform Score: {target.get('score_platform_signals')}
     """
     
     try:
