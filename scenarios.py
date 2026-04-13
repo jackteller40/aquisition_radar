@@ -68,8 +68,8 @@ Platform Score: {target.get('score_platform_signals')}'
         
         sections = {
             "base_case": _extract_section(raw, "BASE CASE:"),
-            "upside_case": _extract_section(raw, "UPSIDE CASE"),
-            "downside_case": _extract_section(raw, "DOWNSIDE CASE"),
+            "upside_case": _extract_section(raw, "UPSIDE CASE:"),
+            "downside_case": _extract_section(raw, "DOWNSIDE CASE:"),
             "acquisition_thesis": _extract_section(raw, "ACQUISITION THESIS")
         }
         
