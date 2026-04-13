@@ -136,6 +136,6 @@ if __name__ == "__main__":
     result = generate_scenarios(test_target)
     print("\nRAW KEYS:", result.keys())
     print("\nBASE CASE:", result.get("base_case"))
-    print("\UPSIDE CASE:", result.get("upside_case"))
+    print("\nUPSIDE CASE:", result.get("upside_case"))
     print("\nDOWNSIDE CASE:", result.get("downside_case"))
     print("\nACQUISITION THESIS:", result.get("acquisition_thesis"))
