@@ -153,11 +153,11 @@ if run_button:
                     st.markdown("**Base Case**")
                     st.write(r.get("base_case", "N/A"))
                 with col_b:
-                    st.markdown("**Optimal Case**")
-                    st.write(r.get("optimal_case", "N/A"))
+                    st.markdown("**Upside Case**")
+                    st.write(r.get("upside_case", "N/A"))
                 with col_c:
-                    st.markdown("**Best Case**")
-                    st.write(r.get("best_case", "N/A"))
+                    st.markdown("**Downside Case**")
+                    st.write(r.get("downside_case", "N/A"))
 
                 st.divider()
                 st.markdown("**Signal Breakdown**")
@@ -201,7 +201,7 @@ else:
     3. Traffic analysis scores organic presence
     4. WhoIs lookup estimes owner fatigue
     5. Weighted scoring model ranks all the targets
-    6. Claude generates base, optimal, and best case aquisition scenarios per target
+    6. Claude generates base, upside, and downside case aquisition scenarios per target
     """)
                                 
                                      

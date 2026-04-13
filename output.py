@@ -58,11 +58,11 @@ def print_summary(targets: list[dict]):
         if t.get('base_case'):
             print(f"\n BASE: {t.get('base_case')}")
             
-        if t.get('optimal_case'):
-            print(f"\n OPTIMAL: {t.get('optimal_case')}")
+        if t.get('upside_case'):
+            print(f"\n UPSIDE: {t.get('upside_case')}")
         
-        if t.get('best_case'):
-            print(f"\n BEST: {t.get('best_case')}")
+        if t.get('downside_case'):
+            print(f"\n DOWNSIDE: {t.get('downside_case')}")
             
         print("\n" + "-"*60)
         
@@ -82,9 +82,9 @@ if __name__ == '__main__':
         "score_owner_fatigue": 100.0,
         "score_platform_signals": 100.0,
         "acquisition_thesis": "LessEMF.com is a compelling niche target.",
-        "base_case": "Stabalize platform and implement retention tools.",
-        "optimal_case": "Full Shopify migration with Klaviyo deployment.",
-        "best_case": "Category leader with 2-3x revenue in 36 months."
+        "base_case": "Stabilize platform and implement retention tools, yielding 15-20% revenue lift.",
+        "upside_case": "Full Shopify migration with Klaviyo deployment drives 35-50% revenue growth.",
+        "downside_case": "Platform migration stalls, CAC rises, limited upside without operational execution.",
     }]
     
     print_summary(test)

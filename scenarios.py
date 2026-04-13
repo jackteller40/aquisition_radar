@@ -19,11 +19,11 @@ Generate exactly three scenarios in this format with no preamble:
 BASE CASE:
 [2-3 sentences describing conservative post-acquisition outcome]
 
-OPTIMAL CASE:
-[2-3 sentences describing realistic upside if key gaps are addressed]
+UPSIDE CASE:
+[2-3 sentences describing realistic outperformance if key value creation levers execute well]
 
-BEST CASE:
-[2-3 sentences describing maximum upside if everything goes right]
+DOWNSIDE CASE:
+[2-3 sentences describing risk scenario and what happens if execution falters]
 
 ACQUISITION THESIS:
 [1-2 sentances summarizing why this is an interesting target]
@@ -32,7 +32,7 @@ Keep each scenario consise, specific to the data provided, and grounded in reali
 """
 
 def generate_scenarios(target: dict) -> dict:
-    '''generates base/optimal/best case scenarios for a target using claude API'''
+    '''generates base/upside/downside case scenarios for a target using claude API'''
     
     target_summary = f"""
 Domain: {target.get('domain')}
@@ -68,8 +68,8 @@ Platform Score: {target.get('score_platform_signals')}'
         
         sections = {
             "base_case": _extract_section(raw, "BASE CASE:"),
-            "optimal_case": _extract_section(raw, "OPTIMAL CASE"),
-            "best_case": _extract_section(raw, "BEST CASE"),
+            "upside_case": _extract_section(raw, "UPSIDE CASE"),
+            "downside_case": _extract_section(raw, "DOWNSIDE CASE"),
             "acquisition_thesis": _extract_section(raw, "ACQUISITION THESIS")
         }
         
@@ -80,8 +80,8 @@ Platform Score: {target.get('score_platform_signals')}'
         print(f"Scenario generation failed for {target.get('domain')}: {e}")
         target.update({
             "base_case": None,
-            "optimal_case": None,
-            "best_case": None,
+            "upside_case": None,
+            "downside_case": None,
             "acquisition_thesis": None
         })
         return target
@@ -89,7 +89,7 @@ Platform Score: {target.get('score_platform_signals')}'
 def _extract_section(text: str, header: str) -> str:
     '''extracts text between each header'''
     
-    headers = ["BASE CASE:", "OPTIMAL CASE:", "BEST CASE:", "ACQUISITION THESIS:"]
+    headers = ["BASE CASE:", "UPSIDE CASE:", "DOWNSIDE CASE:", "ACQUISITION THESIS:"]
     
     if header not in text:
         return None
@@ -136,6 +136,6 @@ if __name__ == "__main__":
     result = generate_scenarios(test_target)
     print("\nRAW KEYS:", result.keys())
     print("\nBASE CASE:", result.get("base_case"))
-    print("\nOPTIMAL CASE:", result.get("optimal_case"))
-    print("\nBEST CASE:", result.get("best_case"))
+    print("\UPSIDE CASE:", result.get("upside_case"))
+    print("\nDOWNSIDE CASE:", result.get("downside_case"))
     print("\nACQUISITION THESIS:", result.get("acquisition_thesis"))
