@@ -18,11 +18,11 @@ def score_traffic_and_seo(target: dict) -> float:
         score += 30
     elif indexed < 1000:
         score += 20
-    elif indexed < 1000:
+    elif indexed < 10000:
         score += 10
-    else: 
+    else:
         score += 0
-        
+
     if organic == 0:
         score += 40
     elif organic < 5:
@@ -30,7 +30,7 @@ def score_traffic_and_seo(target: dict) -> float:
     elif organic < 10:
         score += 10
     else:
-        score += 10
+        score += 0
         
     if target.get("has_paid_ads"):
         score += 20

@@ -69,10 +69,16 @@ def run_pipeline(max_domains: int = 20) -> list[dict]:
         result.update(traffic)
         enriched.append(result)
         time.sleep(1)
+
+    before = len(enriched)
+    enriched = [r for r in enriched if in_traffic_band(r)]
+    if len(enriched) < before:
+        print(f"Traffic band filter: dropped {before - len(enriched)} outside "
+              f"{MIN_MONTHLY_TRAFFIC:,}-{MAX_MONTHLY_TRAFFIC:,} monthly visits")
     
     # step 4
     print("\n" + "="* 60)
-    print("STEP 4: OWNER FATIUGE")
+    print("STEP 4: OWNER FATIGUE")
     print("="*60)
     
     final = []
@@ -85,8 +91,18 @@ def run_pipeline(max_domains: int = 20) -> list[dict]:
         time.sleep(0.5)
         
     save_to_csv(final)
-    print(f"\nPipline complete, {len(final)} targets enriched")
+    print(f"\nPipeline complete, {len(final)} targets enriched")
     return final
+
+def in_traffic_band(result: dict) -> bool:
+    """keeps targets inside the configured monthly traffic band.
+    only SEMrush returns a visit estimate; SerpAPI mode has no visit count,
+    so targets without one pass through rather than being dropped."""
+    traffic = result.get("organic_traffic")
+    if traffic is None:
+        return True
+    total = traffic + (result.get("paid_traffic") or 0)
+    return MIN_MONTHLY_TRAFFIC <= total <= MAX_MONTHLY_TRAFFIC
 
 def is_legitimate_domain(domain: str) -> bool:
     blacklist_keywords = ["walmart-", "amazon-", ".com.com", ".ltd.com", "ebay-"]

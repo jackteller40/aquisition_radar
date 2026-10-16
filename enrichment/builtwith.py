@@ -5,20 +5,25 @@ sys.path.append(str(Path(__file__).parent.parent))
 import requests
 from bs4 import BeautifulSoup
 
+# Order matters: the first platform with a matching fingerprint wins.
+# Fingerprints must be specific. Short substrings like "mage" match ordinary
+# words ("image") and misclassify almost every site. WordPress is checked last
+# because WooCommerce sites also contain the WordPress markers.
 PLATFORM_SIGNALS = {
-    "shopify": ["shopify", "myshopify", "cdn.shopify"],
-    "woocommerce": ["woocommerce", "wp-content"],
-    "magento": ["magento", "mage"],
-    "bigcommerce": ["bigcommerce", "bigcommerce.com"],
-    "squarespace": ["squarespace"],
-    "wix": ["wix.com", "wixsite"]
+    "shopify": ["cdn.shopify.com", "myshopify.com", "shopify.theme", "window.shopify"],
+    "woocommerce": ["woocommerce", "wc-ajax", "wc-block"],
+    "magento": ["magento", "mage/cookies", "mage-cache", "requirejs/require", "/static/version"],
+    "bigcommerce": ["bigcommerce.com", "cdn11.bigcommerce", "stencil-utils"],
+    "squarespace": ["squarespace.com", "static1.squarespace"],
+    "wix": ["wix.com", "wixsite.com", "wixstatic.com"],
+    "wordpress": ["wp-content", "wp-includes", "wp-json"],
 }
 
 TECH_SIGNALS = {
     "has_klaviyo": ["klaviyo"],
-    "has_review_app": ["yotpo", "okendo", "stamped", "judge.me", "trustpilot", "reviews.io"],
-    "has_abandoned_cart": ["klaviyo", "omnisend", "drip", "cartstack"],
-    "has_live_chat": ["intercom", "drift", "tidio", "gorgias", "zendesk"],
+    "has_review_app": ["yotpo", "okendo", "stamped.io", "judge.me", "trustpilot", "reviews.io"],
+    "has_abandoned_cart": ["klaviyo", "omnisend", "getdrip", "drip.com", "cartstack"],
+    "has_live_chat": ["intercom.io", "intercomcdn", "driftt.com", "drift.com", "tidio", "gorgias", "zendesk", "zdassets"],
 }
 
 def detect_platform(html: str) -> str:

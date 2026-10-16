@@ -5,10 +5,18 @@ sys.path.append(str(Path(__file__).parent))
 import anthropic
 from config import ANTHROPIC_API_KEY, MODEL, MAX_TOKENS
 
-client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+_client = None
+
+def _get_client():
+    """creates the Anthropic client on first use so importing this module
+    never requires an API key (e.g. when the dashboard runs in demo mode)"""
+    global _client
+    if _client is None:
+        _client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    return _client
 
 SCENARIO_PROMPT = """
-You are a private equity analysts evaluating e-commerce acquisition targets.
+You are a private equity analyst evaluating e-commerce acquisition targets.
 Given the following data about a target business, generate three acquisition scenarios
 
 Target Data:
@@ -26,9 +34,9 @@ DOWNSIDE CASE:
 [2-3 sentences describing risk scenario and what happens if execution falters]
 
 ACQUISITION THESIS:
-[1-2 sentances summarizing why this is an interesting target]
+[1-2 sentences summarizing why this is an interesting target]
 
-Keep each scenario consise, specific to the data provided, and grounded in realistic PE assumptions.
+Keep each scenario concise, specific to the data provided, and grounded in realistic PE assumptions.
 """
 
 def generate_scenarios(target: dict) -> dict:
@@ -46,13 +54,17 @@ Has Review App: {target.get('has_review_app')}
 Has Abandoned Cart: {target.get('has_abandoned_cart')}
 Has Live Chat: {target.get('has_live_chat')}
 Is Archaic Platform: {target.get('is_archaic')}
-Traffic Score: {target.get('score_traffic_and_seo')}
-Operational Gaps Score: {target.get('score_owner_fatigue')}
+Has Paid Ads: {target.get('has_paid_ads')}
+Traffic & SEO Decay Score: {target.get('score_traffic_and_seo')}
+Operational Gaps Score: {target.get('score_operational_gaps')}
+Owner Fatigue Score: {target.get('score_owner_fatigue')}
 Platform Score: {target.get('score_platform_signals')}
+Catalog Fit Score: {target.get('score_catalog_fit')}
+(Signal scores run 0-100; higher means more distress a buyer could fix.)
     """
     
     try:
-        response = client.messages.create(
+        response = _get_client().messages.create(
             model = MODEL,
             max_tokens = MAX_TOKENS,
             messages = [
@@ -64,13 +76,12 @@ Platform Score: {target.get('score_platform_signals')}
         )
         
         raw = response.content[0].text.strip()
-        print("\nRAW RESPONSE:\n", raw)  
         
         sections = {
             "base_case": _extract_section(raw, "BASE CASE:"),
             "upside_case": _extract_section(raw, "UPSIDE CASE:"),
             "downside_case": _extract_section(raw, "DOWNSIDE CASE:"),
-            "acquisition_thesis": _extract_section(raw, "ACQUISITION THESIS")
+            "acquisition_thesis": _extract_section(raw, "ACQUISITION THESIS:")
         }
         
         target.update(sections)

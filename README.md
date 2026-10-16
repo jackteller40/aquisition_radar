@@ -2,7 +2,7 @@
 
 An automated deal sourcing pipeline that finds, filters, and ranks small e-commerce businesses as acquisition targets, then uses Claude to generate an investment thesis for each one.
 
-Press run, get a ranked list of targets with a composite score, a signal-by-signal breakdown, and three acquisition scenarios per company.
+Press run, get a ranked list of targets with a composite score, a signal-by-signal breakdown, three acquisition scenarios, and an acquisition thesis per company.
 
 **Live demo:** [add Streamlit URL]
 
@@ -42,7 +42,7 @@ Seed keywords
 6. Decline Scoring ───── Weighted model produces a composite score per target
      │
      ▼
-7. Scenario Generation ─ Claude writes base, optimal, and best case scenarios
+7. Scenario Generation ─ Claude writes base, upside, and downside case scenarios
      │
      ▼
 8. Ranked Output ─────── CSV + terminal summary + Streamlit dashboard
@@ -64,7 +64,7 @@ Configurable through `TRAFFIC_SOURCE`:
 - **`serpapi`** (default) estimates organic visibility from search results, indexed page counts, and paid ad presence.
 - **`semrush`** pulls traffic data from the SEMrush API for more accurate trend data.
 
-Targets outside the traffic band in `config.py` (default 5,000 to 500,000 monthly visits) are excluded, which removes both hobby sites and businesses too large to be realistic targets.
+In `semrush` mode, targets outside the traffic band in `config.py` (default 5,000 to 500,000 monthly visits) are excluded, which removes both hobby sites and businesses too large to be realistic targets. `serpapi` mode has no visit estimate, so the band is not applied there.
 
 ### 5. Owner Fatigue
 A WHOIS lookup returns the domain registration date. Domains older than the fatigue threshold (default 8 years) score higher on the theory that long-tenured owners are more likely to be open to a sale.
@@ -73,15 +73,16 @@ A WHOIS lookup returns the domain registration date. Domains older than the fati
 Each target is scored across five signals and combined into a weighted composite (see [Scoring Model](#scoring-model)).
 
 ### 7. Scenario Generation
-For each scored target, the pipeline sends Claude the company's enrichment data and signal breakdown: platform, traffic profile, paid vs. organic mix, domain age, and catalog fit. Claude returns three acquisition scenarios:
+For each scored target, the pipeline sends Claude the company's enrichment data and every signal score: platform, indexed pages, organic results, paid ad presence, retention tooling, domain age, and catalog fit. Claude returns three scenarios plus a short thesis:
 
-| Scenario | What it describes |
+| Section | What it describes |
 |---|---|
-| **Base case** | Acquire and stabilize. Modest gains from basic operational cleanup. |
-| **Optimal case** | Replatform, fix SEO, and rebalance the paid/organic mix. Realistic upside with focused execution. |
-| **Best case** | Full integration into an existing catalog with cross-selling and shared fulfillment. |
+| **Base case** | Conservative post-acquisition outcome from basic operational cleanup. |
+| **Upside case** | Realistic outperformance if the key value creation levers execute well. |
+| **Downside case** | What happens if execution falters, and the main risks. |
+| **Acquisition thesis** | One or two sentences on why the target is interesting. |
 
-Each scenario names the specific levers that drive it, so the output reads as an investment thesis rather than a generic summary.
+Each scenario is tied to the target's own signals, so the output reads as an investment thesis rather than a generic summary.
 
 ### 8. Ranked Output
 Targets are sorted by composite score and written to `data/ranked_targets.csv`, printed as a terminal summary, and displayed in the Streamlit dashboard.
@@ -123,6 +124,8 @@ aquisition_radar/
 ├── scenarios.py             # Claude API scenario generation
 ├── output.py                # CSV export and terminal summary
 ├── app.py                   # Streamlit dashboard
+├── demo/
+│   └── demo_targets.json    # fictional targets + sample scenarios for demo mode
 ├── discovery/
 │   └── google_shopping.py   # SerpAPI domain discovery
 ├── enrichment/
@@ -174,6 +177,8 @@ python main.py
 streamlit run app.py
 ```
 
+**Demo mode:** the dashboard opens with *Demo mode* switched on. It loads six fictional targets from `demo/demo_targets.json`, scores them with the live scoring model, and shows sample scenarios, all instantly and with no API keys or credits. Switch it off in the sidebar to run the real pipeline.
+
 ---
 
 ## Configuration
@@ -183,7 +188,7 @@ All settings live in `config.py`.
 | Setting | Default | Description |
 |---|---|---|
 | `MODEL` | `claude-sonnet-4-6` | Claude model used for scenario generation |
-| `PLATFORM_GATE_MODE` | `strict` | `strict` passes archaic platforms only; `soft` flags them and passes everything |
+| `PLATFORM_GATE_MODE` | `soft` | `strict` passes archaic platforms only; `soft` flags them and passes everything |
 | `ARCHAIC_PLATFORMS` | WooCommerce, Magento, WordPress, unknown | Platforms treated as archaic |
 | `TRAFFIC_SOURCE` | `serpapi` | `serpapi` (cheaper) or `semrush` (more accurate) |
 | `MIN_MONTHLY_TRAFFIC` | 5,000 | Lower bound of the target universe |
@@ -211,6 +216,7 @@ This is a sourcing tool, not a valuation tool. Its output is a shortlist for hum
 - **Domain age is not owner age.** WHOIS registration date is a rough stand-in for founder tenure. A domain can change hands without the date changing.
 - **Platform detection is fingerprint-based.** Heavily customized or headless sites may be misclassified or labeled unknown.
 - **Discovery can surface large brands.** The blacklist catches the common ones, but new large retailers occasionally slip through and need to be added.
+- **Platform fingerprints are matched as text.** Specific markers are used to avoid false hits, but a site that mentions another platform in its page source can still be misread.
 - **Scenarios are generated, not modeled.** Claude's scenarios are grounded in the target's signals but are not financial projections.
 
 ## Next Steps

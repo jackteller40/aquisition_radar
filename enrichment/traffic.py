@@ -60,7 +60,7 @@ def get_traffic_semrush(domain: str) -> dict:
             "key": SEMRUSH_API_KEY,
             "domain": domain,
             "database": "us",
-            "export_columns": "or, Ot, Oc, Ad, At"
+            "export_columns": "Or,Ot,Oc,Ad,At"
         }
         
         response = requests.get(
@@ -85,7 +85,7 @@ def get_traffic_semrush(domain: str) -> dict:
         data = dict(zip(headers, values))
         
         return {
-            "organic_kaywords": int(data.get("Organic Keywords", 0) or 0),
+            "organic_keywords": int(data.get("Organic Keywords", 0) or 0),
             "organic_traffic": int(data.get("Organic Traffic", 0) or 0),
             "paid_keywords": int(data.get("Adwords Keywords", 0) or 0),
             "paid_traffic": int(data.get("Adwords Traffic", 0) or 0),
@@ -97,11 +97,12 @@ def get_traffic_semrush(domain: str) -> dict:
         return {
             "organic_keywords": None,
             "organic_traffic": None,
+            "paid_keywords": None,
             "paid_traffic": None,
             "traffic_source": "semrush"
         }
         
-def enrich_traffic(domain: str) -> str:
+def enrich_traffic(domain: str) -> dict:
     result = {"domain": domain}
     
     if TRAFFIC_SOURCE == "semrush":

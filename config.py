@@ -41,7 +41,7 @@ DOMAIN_AGE_FATIGUE = 8
 REVIEW_STALE_MONTHS = 6
 PAID_TRAFFIC_WARNING = 0.40
 ORGANIC_DECAY_HIGH = -0.05
-ORGANIC_DEAY_VERY_HIGH = -0.20
+ORGANIC_DECAY_VERY_HIGH = -0.20
 
 CATALOG_FIT_SIMILAR = "similar"
 CATALOG_FIT_ADJACENT = "adjacent"
@@ -57,7 +57,7 @@ SEED_KEYWORDS = [
     "grounding products wellness",
     "air purification wellness",
     "alternative health devices",
-    "hoilistic wellness devices"
+    "holistic wellness devices"
 ]
 
 DATA_PATH = Path(__file__).parent / "data" / "targets.csv"
